@@ -61,7 +61,9 @@ initializr:
           - compatibilityRange: "[3.5.0,4.0.0)"
             version: 3.5.8
           - compatibilityRange: "[4.0.0,4.1.0-M1)"
-            version: 4.0.3
+            version: 4.0.4
+          - compatibilityRange: "[4.1.0,4.2.0-M1)"
+            version: 4.1.1
       netflix-dgs:
         groupId: com.netflix.graphql.dgs
         artifactId: graphql-dgs-platform-dependencies
@@ -102,9 +104,9 @@ initializr:
         versionProperty: spring-ai.version
         mappings:
           - compatibilityRange: "[3.5.0,4.0.0)"
-            version: 1.1.6
+            version: 1.1.8
           - compatibilityRange: "[4.0.0,4.2.0-M1)"
-            version: 2.0.0-M6
+            version: 2.0.0
       spring-cloud:
         groupId: org.springframework.cloud
         artifactId: spring-cloud-dependencies
@@ -112,9 +114,9 @@ initializr:
         order: 50
         mappings:
           - compatibilityRange: "[3.5.0,4.0.0)"
-            version: 2025.0.2
-          - compatibilityRange: "[4.0.0,4.1.0-M1)"
-            version: 2025.1.1
+            version: 2025.0.3
+          - compatibilityRange: "[4.0.0,4.2.0-M1)"
+            version: 2025.1.2
       spring-cloud-azure:
         groupId: com.azure.spring
         artifactId: spring-cloud-azure-dependencies
@@ -123,7 +125,7 @@ initializr:
           - compatibilityRange: "[3.5.0,4.0.0)"
             version: 6.1.0
           - compatibilityRange: "[4.0.0,4.1.0-M1)"
-            version: 7.2.0
+            version: 7.3.0
       spring-cloud-gcp:
         groupId: com.google.cloud
         artifactId: spring-cloud-gcp-dependencies
@@ -142,8 +144,8 @@ initializr:
         mappings:
           - compatibilityRange: "[3.5.0,4.0.0)"
             version: 4.3.2
-          - compatibilityRange: "[4.0.0,4.1.0-M1)"
-            version: 4.4.0
+          - compatibilityRange: "[4.0.0,4.2.0-M1)"
+            version: 4.4.1
       spring-grpc:
         groupId: org.springframework.grpc
         artifactId: spring-grpc-dependencies
@@ -157,11 +159,11 @@ initializr:
         versionProperty: spring-modulith.version
         mappings:
           - compatibilityRange: "[3.5.0,4.0.0)"
-            version: 1.4.11
+            version: 1.4.12
           - compatibilityRange: "[4.0.0,4.1.0-M1)"
-            version: 2.0.6
+            version: 2.0.7
           - compatibilityRange: "[4.1.0-M1,4.2.0-M1)"
-            version: 2.1.0-RC1
+            version: 2.1.0
       spring-shell:
         groupId: org.springframework.shell
         artifactId: spring-shell-dependencies
@@ -178,6 +180,13 @@ initializr:
         mappings:
           - compatibilityRange: "[3.5.0,4.0.0)"
             version: 1.0.1
+      tanzu-spring-sdk:
+        groupId: com.vmware.tanzu.spring
+        artifactId: tanzu-spring-sdk-dependencies
+        versionProperty: tanzu-spring-sdk.version
+        mappings:
+          - compatibilityRange: "[3.5.0,4.1.0-M1)"
+            version: 1.0.0
       timefold-solver:
         groupId: ai.timefold.solver
         artifactId: timefold-solver-bom
@@ -186,16 +195,18 @@ initializr:
           - compatibilityRange: "[3.5.0,4.0.0)"
             version: 1.33.0
           - compatibilityRange: "[4.0.0,4.1.0-M1)"
-            version: 2.0.0
+            version: 2.2.0
       vaadin:
         groupId: com.vaadin
         artifactId: vaadin-bom
         versionProperty: vaadin.version
         mappings:
           - compatibilityRange: "[3.5.0,4.0.0)"
-            version: 24.10.4
+            version: 24.10.7
           - compatibilityRange: "[4.0.0,4.1.0-M1)"
-            version: 25.1.5
+            version: 25.1.8
+          - compatibilityRange: "[4.1.0,4.2.0-M1)"
+            version: 25.2.0
     platform:
       compatibilityRange: "3.5.0"
     repositories:
@@ -454,7 +465,7 @@ initializr:
           artifactId: vaadin-spring-boot-starter
           description: The full-stack web app platform for Spring. Build views fully in Java with Flow, or in React using Hilla.
           bom: vaadin
-          compatibilityRange: "[3.5.0,4.1.0-M1)"
+          compatibilityRange: "[3.5.0,4.2.0-M1)"
           links:
             - rel: guide
               href: https://spring.io/guides/gs/crud-with-vaadin/
@@ -1142,6 +1153,15 @@ initializr:
           links:
             - rel: reference
               href: https://docs.spring.io/spring-boot/{bootVersion}/how-to/batch.html
+        - name: Spring Batch MongoDB
+          id: batch-data-mongodb
+          groupId: org.springframework.boot
+          artifactId: spring-boot-starter-batch-data-mongodb
+          description: MongoDB support for Spring Batch applications.
+          compatibilityRange: "4.1.0-M3"
+          links:
+            - rel: reference
+              href: https://docs.spring.io/spring-boot/{bootVersion}/how-to/batch.html
         - name: Hazelcast
           id: hazelcast
           groupId: org.springframework.boot
@@ -1171,6 +1191,24 @@ initializr:
           links:
             - rel: reference
               href: https://docs.spring.io/spring-boot/{bootVersion}/reference/io/quartz.html
+        - name: JobRunr
+          id: jobrunr
+          version: 8.7.0
+          description: Easily schedule and process background jobs using a distributed job scheduler with a built-in dashboard.
+          starter: false
+          compatibilityRange: "[3.5.0,4.2.0-M1)"
+          mappings:
+            - compatibilityRange: "[3.5.0,4.0.0)"
+              groupId: org.jobrunr
+              artifactId: jobrunr-spring-boot-3-starter
+            - compatibilityRange: "[4.0.0,4.2.0-M1)"
+              groupId: org.jobrunr
+              artifactId: jobrunr-spring-boot-4-starter
+          links:
+            - rel: guide
+              href: https://www.jobrunr.io/en/documentation/getting-started/spring/
+            - rel: reference
+              href: https://www.jobrunr.io/en/documentation/configuration/spring/
         - name: Spring Cache Abstraction
           id: cache
           description: Provides cache-related operations, such as the ability to update the content of the cache, but does not provide the actual data store.
@@ -1249,7 +1287,7 @@ initializr:
           groupId: de.codecentric
           artifactId: spring-boot-admin-starter-client
           description: Required for your application to register with a Codecentric's Spring Boot Admin Server instance.
-          compatibilityRange: "[3.5.0,4.1.0-M1)"
+          compatibilityRange: "[3.5.0,4.2.0-M1)"
           bom: codecentric-spring-boot-admin
           links:
             - rel: reference
@@ -1259,7 +1297,7 @@ initializr:
           groupId: de.codecentric
           artifactId: spring-boot-admin-starter-server
           description: A community project to manage and monitor your Spring Boot applications. Provides a UI on top of the Spring Boot Actuator endpoints.
-          compatibilityRange: "[3.5.0,4.1.0-M1)"
+          compatibilityRange: "[3.5.0,4.2.0-M1)"
           bom: codecentric-spring-boot-admin
           links:
             - rel: reference
@@ -1428,7 +1466,7 @@ initializr:
               href: https://java.testcontainers.org/
         - name: Contract Verifier
           bom: spring-cloud
-          compatibilityRange: "[3.5.0,4.1.0-M1)"
+          compatibilityRange: "[3.5.0,4.2.0-M1)"
           id: cloud-contract-verifier
           description: Moves TDD to the level of software architecture by enabling Consumer Driven Contract (CDC) development.
           groupId: org.springframework.cloud
@@ -1439,7 +1477,7 @@ initializr:
               href: https://docs.spring.io/spring-cloud-contract/reference/
         - name: Contract Stub Runner
           bom: spring-cloud
-          compatibilityRange: "[3.5.0,4.1.0-M1)"
+          compatibilityRange: "[3.5.0,4.2.0-M1)"
           id: cloud-contract-stub-runner
           description: Stub Runner for HTTP/Messaging based communication. Allows creating WireMock stubs from RestDocs tests.
           groupId: org.springframework.cloud
@@ -1464,7 +1502,7 @@ initializr:
               href: https://docs.spring.io/spring-boot/{bootVersion}/reference/data/nosql.html#data.nosql.ldap.embedded
     - name: Spring Cloud
       bom: spring-cloud
-      compatibilityRange: "[3.5.0,4.1.0-M1)"
+      compatibilityRange: "[3.5.0,4.2.0-M1)"
       content:
         - name: Cloud Bootstrap
           id: cloud-starter
@@ -1496,7 +1534,7 @@ initializr:
               href: https://docs.spring.io/spring-cloud-task/reference/
     - name: Spring Cloud Config
       bom: spring-cloud
-      compatibilityRange: "[3.5.0,4.1.0-M1)"
+      compatibilityRange: "[3.5.0,4.2.0-M1)"
       content:
         - name: Config Client
           id: cloud-config-client
@@ -1543,7 +1581,7 @@ initializr:
               href: https://docs.spring.io/spring-cloud-consul/reference/
     - name: Spring Cloud Discovery
       bom: spring-cloud
-      compatibilityRange: "[3.5.0,4.1.0-M1)"
+      compatibilityRange: "[3.5.0,4.2.0-M1)"
       content:
         - name: Eureka Discovery Client
           id: cloud-eureka
@@ -1585,24 +1623,20 @@ initializr:
               href: https://docs.spring.io/spring-cloud-consul/reference/discovery.html
     - name: Spring Cloud Routing
       bom: spring-cloud
-      compatibilityRange: "[3.5.0,4.1.0-M1)"
+      compatibilityRange: "[3.5.0,4.2.0-M1)"
       content:
         - name: Gateway
           id: cloud-gateway
-          mappings:
-            - compatibility-range: "[3.5.0,4.1.0-M1)"
-              groupId: org.springframework.cloud
-              artifactId: spring-cloud-starter-gateway-server-webmvc
+          groupId: org.springframework.cloud
+          artifactId: spring-cloud-starter-gateway-server-webmvc
           description: Provides a simple, yet effective way to route to APIs in Servlet-based applications. Provides cross-cutting concerns to those APIs such as security, monitoring/metrics, and resiliency.
           links:
             - rel: reference
               href: https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webmvc.html
         - name: Reactive Gateway
           id: cloud-gateway-reactive
-          mappings:
-            - compatibility-range: "[3.5.0,4.1.0-M1)"
-              groupId: org.springframework.cloud
-              artifactId: spring-cloud-starter-gateway-server-webflux
+          groupId: org.springframework.cloud
+          artifactId: spring-cloud-starter-gateway-server-webflux
           description: Provides a simple, yet effective way to route to APIs in reactive applications. Provides cross-cutting concerns to those APIs such as security, monitoring/metrics, and resiliency.
           facets:
             - reactive
@@ -1636,7 +1670,7 @@ initializr:
               href: https://docs.spring.io/spring-cloud-commons/reference/spring-cloud-commons/loadbalancer.html
     - name: Spring Cloud Circuit Breaker
       bom: spring-cloud
-      compatibilityRange: "[3.5.0,4.1.0-M1)"
+      compatibilityRange: "[3.5.0,4.2.0-M1)"
       content:
         - name: Resilience4J
           id: cloud-resilience4j
@@ -1648,7 +1682,7 @@ initializr:
               href: https://docs.spring.io/spring-cloud-circuitbreaker/reference/spring-cloud-circuitbreaker-resilience4j.html
     - name: Spring Cloud Messaging
       bom: spring-cloud
-      compatibilityRange: "[3.5.0,4.1.0-M1)"
+      compatibilityRange: "[3.5.0,4.2.0-M1)"
       content:
         - name: Cloud Bus
           id: cloud-bus
@@ -1668,7 +1702,7 @@ initializr:
               href: https://docs.spring.io/spring-cloud-stream/reference/
     - name: VMware Tanzu Application Service
       bom: spring-cloud-services
-      compatibilityRange: "[3.5.0,4.1.0-M1)"
+      compatibilityRange: "[3.5.0,4.2.0-M1)"
       content:
         - name: Config Client (TAS)
           id: scs-config-client
@@ -1766,6 +1800,20 @@ initializr:
           links:
             - rel: reference
               href: https://techdocs.broadcom.com/us/en/vmware-tanzu/spring/spring-cloud-gateway-extensions/1-0-0/scg-extensions/transformation.html
+    - name: VMware Tanzu Spring SDK
+      compatibilityRange: "[3.5.0,4.1.0-M1)"
+      content:
+        - name: Tanzu Spring SDK [Enterprise]
+          id: tanzu-spring-sdk
+          bom: tanzu-spring-sdk
+          description: The Tanzu Spring SDK is a Spring Boot BOM with optional libraries for exposing observability and using OpenFeature based feature flags in Tanzu Platform.
+          groupId: com.vmware.tanzu.spring
+          artifactId: tanzu-spring-starter
+          facets:
+            - tanzu-spring-enterprise
+          links:
+            - rel: reference
+              href: https://techdocs.broadcom.com/us/en/vmware-tanzu/spring/tanzu-spring/commercial/spring-tanzu/tanzu-spring-sdk-getting-started.html
     - name: Microsoft Azure
       bom: spring-cloud-azure
       compatibilityRange: "[3.5.0,4.1.0-M1)"
@@ -1933,7 +1981,7 @@ initializr:
           id: spring-ai-vectordb-bedrock-knowledgebase
           group-id: org.springframework.ai
           artifact-id: spring-ai-starter-vector-store-bedrock-knowledgebase
-          compatibilityRange: "[4.0.0,4.1.0-M1)"
+          compatibilityRange: "[4.0.0,4.2.0-M1)"
           description: Spring AI vector database support for Amazon Bedrock Knowledge Base. It provides fully managed Retrieval-Augmented Generation (RAG) capabilities with enterprise-grade security and privacy.
           bom: spring-ai
           links:
@@ -1989,6 +2037,7 @@ initializr:
           id: spring-ai-minimax
           group-id: org.springframework.ai
           artifact-id: spring-ai-starter-model-minimax
+          compatibilityRange: "[3.5.0,4.0.0)"
           description: Spring AI support for MiniMax AI models.
           bom: spring-ai
           links:
@@ -2088,7 +2137,7 @@ initializr:
             - compatibilityRange: "[3.5.0,4.0.0)"
               version: 0.0.6
             - compatibilityRange: "[4.0.0,4.2.0-M1)"
-              version: 0.1.8
+              version: 0.1.13
           links:
             - rel: reference
               href: https://github.com/spring-ai-community/mcp-security?tab=readme-ov-file#mcp-security
@@ -2223,6 +2272,7 @@ initializr:
           id: spring-ai-chat-memory-repository-cosmos-db
           group-id: org.springframework.ai
           artifact-id: spring-ai-starter-model-chat-memory-repository-cosmos-db
+          compatibilityRange: "[3.5.0,4.0.0)"
           description: Spring AI support for Azure Cosmos DB based chat memory.
           bom: spring-ai
           links:
@@ -2232,7 +2282,7 @@ initializr:
           id: spring-ai-chat-memory-repository-redis
           group-id: org.springframework.ai
           artifact-id: spring-ai-starter-model-chat-memory-repository-redis
-          compatibilityRange: "[4.0.0,4.1.0-M1)"
+          compatibilityRange: "[4.0.0,4.2.0-M1)"
           description: Spring AI support for Redis based chat memory.
           bom: spring-ai
           links:
@@ -2287,7 +2337,7 @@ initializr:
           id: spring-ai-vectordb-s3
           group-id: org.springframework.ai
           artifact-id: spring-ai-starter-vector-store-s3
-          compatibilityRange: "[4.0.0,4.1.0-M1)"
+          compatibilityRange: "[4.0.0,4.2.0-M1)"
           description: Spring AI vector database support for AWS S3. Store and retrieve vector embeddings using Amazon S3 object storage with efficient search capabilities.
           bom: spring-ai
           links:
@@ -2306,6 +2356,7 @@ initializr:
           id: spring-ai-vectordb-azurecosmosdb
           group-id: org.springframework.ai
           artifact-id: spring-ai-starter-vector-store-azure-cosmos-db
+          compatibilityRange: "[3.5.0,4.0.0)"
           description: Spring AI support for Azure Cosmos DB. Azure Cosmos DB is Microsoft’s globally distributed cloud-native database service designed for mission-critical applications.
           bom: spring-ai
           links:
