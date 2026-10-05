@@ -16,7 +16,6 @@
 
 package io.spring.start.site.extension.dependency.springamqp;
 
-import io.spring.initializr.generator.condition.ConditionalOnPlatformVersion;
 import io.spring.initializr.generator.condition.ConditionalOnRequestedDependency;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import io.spring.start.site.container.ComposeFileCustomizer;
@@ -39,14 +38,8 @@ import org.springframework.context.annotation.Configuration;
 class SpringAmqpProjectGenerationConfiguration {
 
 	@Configuration(proxyBeanMethods = false)
-	@ConditionalOnRequestedDependency("amqp")
-	static class AmqpConfiguration {
-
-		@Bean
-		@ConditionalOnPlatformVersion("[3.5.0,4.0.0-RC1]")
-		SpringRabbitTestBuildCustomizer springAmqpTestBuildCustomizer() {
-			return new SpringRabbitTestBuildCustomizer();
-		}
+	@ConditionalOnRequestedDependency("rabbitmq")
+	static class RabbitMqConfiguration {
 
 		@Bean
 		@ConditionalOnRequestedDependency("testcontainers")
@@ -71,9 +64,9 @@ class SpringAmqpProjectGenerationConfiguration {
 
 	}
 
-	@ConditionalOnRequestedDependency("amqp-streams")
+	@ConditionalOnRequestedDependency("rabbitmq-streams")
 	@Configuration(proxyBeanMethods = false)
-	static class AmqpStreamsConfiguration {
+	static class RabbitMqStreamsConfiguration {
 
 		@Bean
 		SpringRabbitStreamsBuildCustomizer springRabbitStreamsBuildCustomizer() {

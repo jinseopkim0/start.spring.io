@@ -42,11 +42,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SpringIntegrationProjectGenerationConfigurationTests extends AbstractExtensionTests {
 
+	private static final SupportedBootVersion BOOT_VERSION = SupportedBootVersion.latest();
+
 	@Test
 	void buildWithOnlySpringIntegration() {
 		Dependency integrationTest = integrationDependency("test");
 		integrationTest.setScope(Dependency.SCOPE_TEST);
-		assertThat(generateProject(SupportedBootVersion.V4_0, "integration")).mavenBuild()
+		assertThat(generateProject(BOOT_VERSION, "integration")).mavenBuild()
 			.hasDependency(getDependency("integration"))
 			.hasDependency(Dependency.createSpringBootStarter("test", Dependency.SCOPE_TEST))
 			.hasDependency(integrationTest);
@@ -54,29 +56,20 @@ class SpringIntegrationProjectGenerationConfigurationTests extends AbstractExten
 
 	@ParameterizedTest
 	@MethodSource("supportedEntries")
-	void buildWithSupportedEntriesForBoot35(String springBootDependencyId, String integrationModuleId) {
-		assertThat(generateProject(SupportedBootVersion.V3_5, "integration", springBootDependencyId)).mavenBuild()
-			.hasDependency(getDependency("integration"))
-			.hasDependency(Dependency.createSpringBootStarter("test", Dependency.SCOPE_TEST))
-			.hasDependency(integrationDependency(integrationModuleId));
-	}
-
-	@ParameterizedTest
-	@MethodSource("supportedEntries")
 	void buildWithSupportedEntriesForBoot4(String springBootDependencyId, String integrationModuleId) {
-		assertThat(generateProject(SupportedBootVersion.V4_0, "integration", springBootDependencyId)).mavenBuild()
+		assertThat(generateProject(BOOT_VERSION, "integration", springBootDependencyId)).mavenBuild()
 			.hasDependency(getDependency("integration"))
 			.hasDependency(integrationDependency(integrationModuleId));
 	}
 
 	static Stream<Arguments> supportedEntries() {
-		return Stream.of(Arguments.arguments("artemis", "jms"), Arguments.arguments("amqp", "amqp"),
-				Arguments.arguments("amqp-streams", "amqp"), Arguments.arguments("data-jdbc", "jdbc"),
+		return Stream.of(Arguments.arguments("artemis", "jms"), Arguments.arguments("data-jdbc", "jdbc"),
 				Arguments.arguments("jdbc", "jdbc"), Arguments.arguments("data-jpa", "jpa"),
 				Arguments.arguments("data-mongodb", "mongodb"), Arguments.arguments("data-mongodb-reactive", "mongodb"),
 				Arguments.arguments("data-r2dbc", "r2dbc"), Arguments.arguments("data-redis", "redis"),
 				Arguments.arguments("data-redis-reactive", "redis"), Arguments.arguments("kafka", "kafka"),
 				Arguments.arguments("kafka-streams", "kafka"), Arguments.arguments("mail", "mail"),
+				Arguments.arguments("rabbitmq", "amqp"), Arguments.arguments("rabbitmq-streams", "amqp"),
 				Arguments.arguments("rsocket", "rsocket"), Arguments.arguments("web", "http"),
 				Arguments.arguments("webflux", "webflux"), Arguments.arguments("websocket", "websocket"),
 				Arguments.arguments("websocket", "stomp"), Arguments.arguments("web-services", "ws"));
@@ -97,13 +90,13 @@ class SpringIntegrationProjectGenerationConfigurationTests extends AbstractExten
 	}
 
 	static Stream<Arguments> referenceLinks() {
-		return Stream.of(Arguments.arguments("artemis", "jms"), Arguments.arguments("amqp", "amqp"),
-				Arguments.arguments("amqp-streams", "amqp"), Arguments.arguments("data-jdbc", "jdbc"),
+		return Stream.of(Arguments.arguments("artemis", "jms"), Arguments.arguments("data-jdbc", "jdbc"),
 				Arguments.arguments("jdbc", "jdbc"), Arguments.arguments("data-jpa", "jpa"),
 				Arguments.arguments("data-mongodb", "mongodb"), Arguments.arguments("data-mongodb-reactive", "mongodb"),
 				Arguments.arguments("data-r2dbc", "r2dbc"), Arguments.arguments("data-redis", "redis"),
 				Arguments.arguments("data-redis-reactive", "redis"), Arguments.arguments("kafka", "kafka"),
 				Arguments.arguments("kafka-streams", "kafka"), Arguments.arguments("mail", "mail"),
+				Arguments.arguments("rabbitmq", "amqp"), Arguments.arguments("rabbitmq-streams", "amqp"),
 				Arguments.arguments("rsocket", "rsocket"), Arguments.arguments("security", "security"),
 				Arguments.arguments("web", "http"), Arguments.arguments("webflux", "webflux"),
 				Arguments.arguments("websocket", "web-sockets"), Arguments.arguments("websocket", "stomp"),
@@ -118,7 +111,7 @@ class SpringIntegrationProjectGenerationConfigurationTests extends AbstractExten
 
 	@Test
 	void securityAddsSpringSecurityMessaging() {
-		assertThat(generateProject(SupportedBootVersion.V4_0, "integration", "security")).mavenBuild()
+		assertThat(generateProject(BOOT_VERSION, "integration", "security")).mavenBuild()
 			.hasDependency("org.springframework.security", "spring-security-messaging")
 			.doesNotHaveDependency("org.springframework.integration", "spring-integration-security");
 	}

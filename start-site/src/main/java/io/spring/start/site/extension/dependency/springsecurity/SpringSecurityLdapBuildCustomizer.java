@@ -18,23 +18,23 @@ package io.spring.start.site.extension.dependency.springsecurity;
 
 import io.spring.initializr.generator.buildsystem.Build;
 import io.spring.initializr.generator.buildsystem.Dependency;
-import io.spring.initializr.generator.buildsystem.DependencyScope;
 import io.spring.initializr.generator.spring.build.BuildCustomizer;
 
 /**
- * A {@link BuildCustomizer} that automatically adds {@code spring-security-test} when
- * Spring Security is selected.
+ * A {@link BuildCustomizer} that provides Spring Security's LDAP support when both LDAP
+ * and Spring Security are selected.
  *
- * @author Stephane Nicoll
- * @author Madhura Bhave
+ * @author Moritz Halbritter
  */
-public class SpringSecurityTestBuildCustomizer implements BuildCustomizer<Build> {
+public class SpringSecurityLdapBuildCustomizer implements BuildCustomizer<Build> {
 
 	@Override
 	public void customize(Build build) {
-		build.dependencies()
-			.add("security-test", Dependency.withCoordinates("org.springframework.security", "spring-security-test")
-				.scope(DependencyScope.TEST_COMPILE));
+		if (build.dependencies().has("ldap")) {
+			build.dependencies()
+				.add("security-ldap",
+						Dependency.withCoordinates("org.springframework.security", "spring-security-ldap"));
+		}
 	}
 
 }

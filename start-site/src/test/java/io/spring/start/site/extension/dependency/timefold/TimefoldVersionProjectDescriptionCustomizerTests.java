@@ -19,6 +19,7 @@ package io.spring.start.site.extension.dependency.timefold;
 import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.start.site.SupportedBootVersion;
 import io.spring.start.site.extension.AbstractExtensionTests;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -39,18 +40,19 @@ class TimefoldVersionProjectDescriptionCustomizerTests extends AbstractExtension
 		assertThat(mavenPom(request)).hasProperty("java.version", "21");
 	}
 
-	@ParameterizedTest
-	@ValueSource(strings = { "21", "25", "26" })
-	void java21OrLaterIsLeftAsIsWithBoot40(String jvmVersion) {
+	@Test
+	void warningAddedWhenJavaVersionIsRaised() {
 		ProjectRequest request = createProjectRequest(SupportedBootVersion.V4_0, "timefold-solver");
-		request.setJavaVersion(jvmVersion);
-		assertThat(mavenPom(request)).hasProperty("java.version", jvmVersion);
+		request.setJavaVersion("17");
+		assertThat(helpDocument(request)).lines()
+			.containsSubsequence("# Read Me First",
+					"* The JVM level was changed to '21' as Timefold requires Java 21 or later.");
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = { "17", "21", "25" })
-	void javaVersionIsLeftAsIsWithBoot35(String jvmVersion) {
-		ProjectRequest request = createProjectRequest(SupportedBootVersion.V3_5, "timefold-solver");
+	@ValueSource(strings = { "21", "25", "27" })
+	void java21OrLaterIsLeftAsIsWithBoot40(String jvmVersion) {
+		ProjectRequest request = createProjectRequest(SupportedBootVersion.V4_0, "timefold-solver");
 		request.setJavaVersion(jvmVersion);
 		assertThat(mavenPom(request)).hasProperty("java.version", jvmVersion);
 	}

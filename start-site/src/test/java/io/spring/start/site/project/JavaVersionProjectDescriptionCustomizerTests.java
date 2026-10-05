@@ -18,12 +18,17 @@ package io.spring.start.site.project;
 
 import java.util.stream.Stream;
 
+import io.spring.initializr.generator.language.kotlin.KotlinLanguage;
+import io.spring.initializr.generator.test.io.TextAssert;
+import io.spring.initializr.generator.version.Version;
 import io.spring.initializr.web.project.ProjectRequest;
 import io.spring.start.site.SupportedBootVersion;
 import io.spring.start.site.extension.AbstractExtensionTests;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +53,101 @@ class JavaVersionProjectDescriptionCustomizerTests extends AbstractExtensionTest
 			.hasProperty("java.version", "${another.version}");
 	}
 
+	@Test
+	void warningAddedWithUnsupportedCombination() {
+		assertHelpDocument("11").lines()
+			.containsSubsequence("# Read Me First",
+					"* The JVM level was changed to '17', review the [JDK Version Range](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-Versions#jdk-version-range) on the wiki for more details.");
+	}
+
+	@Test
+	void warningAddedWithUnsupportedKotlinVersion() {
+		ProjectRequest request = createProjectRequest(SupportedBootVersion.latest(), "web");
+		request.setJavaVersion("27");
+		request.setLanguage(KotlinLanguage.ID);
+		assertHelpDocument(request).lines()
+			.containsSubsequence("# Read Me First",
+					"* The JVM level was changed to '25' as the Kotlin version does not support a later Java version yet.");
+	}
+
+	@Test
+	void warningRefersToSpringBootWhenKotlinIsNotTheConstraint() {
+		ProjectRequest request = createProjectRequest(SupportedBootVersion.latest(), "web");
+		request.setJavaVersion("1.8");
+		request.setLanguage(KotlinLanguage.ID);
+		assertHelpDocument(request).lines()
+			.containsSubsequence("# Read Me First",
+					"* The JVM level was changed to '17', review the [JDK Version Range](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-Versions#jdk-version-range) on the wiki for more details.");
+	}
+
+	@Test
+	void warningNotAddedWithCompatibleVersion() {
+		assertHelpDocument("17").doesNotContain("# Read Me First");
+	}
+
+	@ParameterizedTest(name = "{0} - Java {1}")
+	@CsvSource(textBlock = """
+			java,1.5
+			java,1.6
+			java,1.7
+			java,1.8
+			java,8
+			java,11
+			java,16
+			kotlin,1.5
+			kotlin,1.6
+			kotlin,1.7
+			kotlin,1.8
+			kotlin,8
+			kotlin,11
+			kotlin,16
+			groovy,1.5
+			groovy,1.6
+			groovy,1.7
+			groovy,1.8
+			groovy,8
+			groovy,11
+			groovy,16
+			""")
+	void belowMinimumIsRaisedToTheMinimum(String language, String jvmVersion) {
+		assertThat(mavenPom(project(language, jvmVersion, SupportedBootVersion.latest().getVersion())))
+			.hasProperty("java.version", "17");
+	}
+
+	@Test
+	void kotlinIsCappedByTheKotlinVersionOfThePlatform() {
+		ProjectRequest request = createProjectRequest(SupportedBootVersion.V4_0, "web");
+		request.setJavaVersion("27");
+		request.setLanguage(KotlinLanguage.ID);
+		assertThat(mavenPom(request)).hasProperty("java.version", "24");
+	}
+
+	@Test
+	void warningNotAddedWithUnparseableVersion() {
+		assertHelpDocument("${another.version}").doesNotContain("# Read Me First");
+	}
+
+	@ParameterizedTest
+	@EnumSource
+	void maxKnownJavaIsCappedBySpringBoot(SupportedBootVersion bootVersion) {
+		JavaVersionMapping mapping = new JavaVersionMapping();
+		String maxKnown = Integer.toString(mapping.getMaxKnownJavaVersion());
+		int expected = mapping.getMaxJavaVersion(Version.parse(bootVersion.getVersion()));
+		assertThat(mavenPom(javaProject(maxKnown, bootVersion.getVersion()))).hasProperty("java.version",
+				Integer.toString(expected));
+	}
+
+	private TextAssert assertHelpDocument(ProjectRequest request) {
+		return assertThat(helpDocument(request));
+	}
+
+	private TextAssert assertHelpDocument(String jvmVersion) {
+		ProjectRequest request = createProjectRequest("web");
+		request.setType("gradle-project");
+		request.setJavaVersion(jvmVersion);
+		return assertHelpDocument(request);
+	}
+
 	@ParameterizedTest(name = "{0} - Java {1} - Spring Boot {2}")
 	@MethodSource("supportedMavenParameters")
 	void mavenBuildWithSupportedOptionsDoesNotDowngradeJavaVersion(String language, String javaVersion,
@@ -63,24 +163,6 @@ class JavaVersionProjectDescriptionCustomizerTests extends AbstractExtensionTest
 		assertThat(gradleBuild(project(language, javaVersion, springBootVersion))).hasToolchainForJava(javaVersion);
 	}
 
-	@Test
-	void java22IsNotSupportedWithKotlinAndBoot35() {
-		assertThat(mavenPom(kotlinProject("22", SupportedBootVersion.V3_5.getVersion()))).hasProperty("java.version",
-				"21");
-	}
-
-	@Test
-	void java23IsNotSupportedWithKotlinAndBoot35() {
-		assertThat(mavenPom(kotlinProject("23", SupportedBootVersion.V3_5.getVersion()))).hasProperty("java.version",
-				"21");
-	}
-
-	@Test
-	void java25IsNotSupportedWithKotlinAndBoot35() {
-		assertThat(mavenPom(kotlinProject("25", SupportedBootVersion.V3_5.getVersion()))).hasProperty("java.version",
-				"21");
-	}
-
 	static Stream<Arguments> supportedMavenParameters() {
 		return Stream.concat(supportedJavaParameters(),
 				Stream.concat(supportedKotlinParameters(), supportedGroovyParameters()));
@@ -94,7 +176,7 @@ class JavaVersionProjectDescriptionCustomizerTests extends AbstractExtensionTest
 		return Stream.of(java("17", SupportedBootVersion.latest().getVersion()),
 				java("21", SupportedBootVersion.latest().getVersion()),
 				java("25", SupportedBootVersion.latest().getVersion()),
-				java("26", SupportedBootVersion.latest().getVersion()));
+				java("27", SupportedBootVersion.latest().getVersion()));
 	}
 
 	private static Stream<Arguments> supportedKotlinParameters() {
@@ -104,7 +186,7 @@ class JavaVersionProjectDescriptionCustomizerTests extends AbstractExtensionTest
 	private static Stream<Arguments> supportedGroovyParameters() {
 		return Stream.of(groovy("21", SupportedBootVersion.latest().getVersion()),
 				groovy("25", SupportedBootVersion.latest().getVersion()),
-				groovy("26", SupportedBootVersion.latest().getVersion()));
+				groovy("27", SupportedBootVersion.latest().getVersion()));
 	}
 
 	private static Arguments java(String javaVersion, String springBootVersion) {
@@ -129,10 +211,6 @@ class JavaVersionProjectDescriptionCustomizerTests extends AbstractExtensionTest
 
 	private ProjectRequest javaProject(String javaVersion, String springBootVersion) {
 		return project("java", javaVersion, springBootVersion);
-	}
-
-	private ProjectRequest kotlinProject(String javaVersion, String springBootVersion) {
-		return project("kotlin", javaVersion, springBootVersion);
 	}
 
 }

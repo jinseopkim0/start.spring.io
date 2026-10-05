@@ -16,11 +16,9 @@
 
 package io.spring.start.site.project;
 
-import io.spring.initializr.generator.language.Language;
-import io.spring.initializr.generator.language.java.JavaLanguage;
-import io.spring.initializr.generator.language.kotlin.KotlinLanguage;
 import io.spring.initializr.generator.version.Version;
 import io.spring.initializr.generator.version.VersionParser;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -36,33 +34,30 @@ class JavaVersionMappingTests {
 	private final JavaVersionMapping mapping = new JavaVersionMapping();
 
 	@CsvSource(textBlock = """
-			3.5.0,17,25
-			4.0.0,17,26
-			4.1.0,17,26
+			4.0.0,17,27
+			4.1.0,17,27
+			4.2.0,17,27
 			""")
-	@ParameterizedTest(name = "Spring Boot {0} with Java | min {1} | max {2}")
-	void java(String bootVersion, int expectedJavaMin, int expectedJavaMax) {
+	@ParameterizedTest(name = "Spring Boot {0} | min {1} | max {2}")
+	void javaVersions(String bootVersion, int expectedJavaMin, int expectedJavaMax) {
 		Version version = toVersion(bootVersion);
-		Language java = new JavaLanguage();
-		int min = this.mapping.getMinJavaVersion(version, java);
-		int max = this.mapping.getMaxJavaVersion(version, java);
-		assertThat(min).isEqualTo(expectedJavaMin);
-		assertThat(max).isEqualTo(expectedJavaMax);
+		assertThat(this.mapping.getMinJavaVersion(version)).isEqualTo(expectedJavaMin);
+		assertThat(this.mapping.getMaxJavaVersion(version)).isEqualTo(expectedJavaMax);
 	}
 
 	@CsvSource(textBlock = """
-			3.5.0,17,21
-			4.0.0,17,24
-			4.1.0,17,25
+			4.0.0,2.2.0
+			4.1.0,2.3.0
+			4.2.0,2.4.0
 			""")
-	@ParameterizedTest(name = "Spring Boot {0} with Kotlin | min {1} | max {2}")
-	void kotlin(String bootVersion, int expectedJavaMin, int expectedJavaMax) {
-		Version version = toVersion(bootVersion);
-		Language kotlin = new KotlinLanguage();
-		int min = this.mapping.getMinJavaVersion(version, kotlin);
-		int max = this.mapping.getMaxJavaVersion(version, kotlin);
-		assertThat(min).isEqualTo(expectedJavaMin);
-		assertThat(max).isEqualTo(expectedJavaMax);
+	@ParameterizedTest(name = "Spring Boot {0} | Kotlin {1}")
+	void kotlinVersion(String bootVersion, String expectedKotlinVersion) {
+		assertThat(this.mapping.getKotlinVersion(toVersion(bootVersion))).isEqualTo(toVersion(expectedKotlinVersion));
+	}
+
+	@Test
+	void maxKnownJavaVersion() {
+		assertThat(this.mapping.getMaxKnownJavaVersion()).isEqualTo(27);
 	}
 
 	private Version toVersion(String version) {

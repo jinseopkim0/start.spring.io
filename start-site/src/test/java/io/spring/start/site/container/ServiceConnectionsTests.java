@@ -28,6 +28,7 @@ import static org.assertj.core.api.Assertions.tuple;
  * Tests for {@link ServiceConnections}.
  *
  * @author Kaique Vieira Soares
+ * @author Moritz Halbritter
  */
 class ServiceConnectionsTests {
 
@@ -66,8 +67,15 @@ class ServiceConnectionsTests {
 	@Test
 	void serviceConnectionHandlesNullAnnotations() {
 		ServiceConnections.ServiceConnection conn = new ServiceConnections.ServiceConnection("test", null,
-				"com.example.Test", false, null, null);
+				"com.example.Test", false, null, null, null);
 		assertThat(conn.annotations()).isEmpty();
+	}
+
+	@Test
+	void serviceConnectionHandlesNullConnectionTypes() {
+		ServiceConnections.ServiceConnection conn = new ServiceConnections.ServiceConnection("test", null,
+				"com.example.Test", false, null, null, null);
+		assertThat(conn.connectionTypes()).isEmpty();
 	}
 
 	@Test
@@ -77,6 +85,7 @@ class ServiceConnectionsTests {
 		assertThat(conn.id()).isEqualTo("redis");
 		assertThat(conn.isGenericContainer()).isTrue();
 		assertThat(conn.connectionName()).isEqualTo("redisConnection");
+		assertThat(conn.connectionTypes()).isEmpty();
 		assertThat(conn.annotations()).isEmpty();
 	}
 
@@ -87,7 +96,60 @@ class ServiceConnectionsTests {
 		assertThat(conn.id()).isEqualTo("mongo");
 		assertThat(conn.isGenericContainer()).isFalse();
 		assertThat(conn.connectionName()).isNull();
+		assertThat(conn.connectionTypes()).isEmpty();
 		assertThat(conn.annotations()).isEmpty();
+	}
+
+	@Test
+	void withConnectionTypesSetsTypesAndPreservesImmutability() {
+		ClassName type = ClassName.of("org.example.ConnectionDetails");
+		ServiceConnections.ServiceConnection original = ServiceConnections.ServiceConnection.ofContainer("test", null,
+				"com.example.Test", false);
+		ServiceConnections.ServiceConnection updated = original.withConnectionTypes(type);
+		assertThat(original.connectionTypes()).isEmpty();
+		assertThat(updated.connectionTypes()).containsExactly(type);
+	}
+
+	@Test
+	void withConnectionTypesSetsSeveralTypes() {
+		ClassName first = ClassName.of("org.example.FirstConnectionDetails");
+		ClassName second = ClassName.of("org.example.SecondConnectionDetails");
+		ServiceConnections.ServiceConnection conn = ServiceConnections.ServiceConnection
+			.ofContainer("test", null, "com.example.Test", false)
+			.withConnectionTypes(first, second);
+		assertThat(conn.connectionTypes()).containsExactly(first, second);
+	}
+
+	@Test
+	void withConnectionTypesReplacesTypes() {
+		ClassName first = ClassName.of("org.example.FirstConnectionDetails");
+		ClassName second = ClassName.of("org.example.SecondConnectionDetails");
+		ServiceConnections.ServiceConnection conn = ServiceConnections.ServiceConnection
+			.ofContainer("test", null, "com.example.Test", false)
+			.withConnectionTypes(first)
+			.withConnectionTypes(second);
+		assertThat(conn.connectionTypes()).containsExactly(second);
+	}
+
+	@Test
+	void withConnectionTypesPreservesNameAndAnnotations() {
+		ClassName ssl = ClassName.of("org.example.Ssl");
+		ServiceConnections.ServiceConnection conn = ServiceConnections.ServiceConnection
+			.ofGenericContainer("redis", null, "redis")
+			.withAnnotation(ssl)
+			.withConnectionTypes(ClassName.of("org.example.ConnectionDetails"));
+		assertThat(conn.connectionName()).isEqualTo("redis");
+		assertThat(conn.annotations()).extracting(ServiceConnections.AnnotationRequest::className).containsExactly(ssl);
+	}
+
+	@Test
+	void withAnnotationPreservesConnectionTypes() {
+		ClassName type = ClassName.of("org.example.ConnectionDetails");
+		ServiceConnections.ServiceConnection conn = ServiceConnections.ServiceConnection
+			.ofContainer("test", null, "com.example.Test", false)
+			.withConnectionTypes(type)
+			.withAnnotation(ClassName.of("org.example.Ssl"));
+		assertThat(conn.connectionTypes()).containsExactly(type);
 	}
 
 	@Test

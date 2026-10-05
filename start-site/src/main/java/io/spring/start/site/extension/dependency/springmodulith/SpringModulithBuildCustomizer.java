@@ -43,11 +43,11 @@ class SpringModulithBuildCustomizer implements BuildCustomizer<Build> {
 	private static final VersionRange SPRING_BOOT_4_1_OR_LATER = VersionParser.DEFAULT.parseRange("4.1.0-M1");
 
 	private static final Collection<String> OBSERVABILITY_DEPENDENCIES = List.of("datadog", "graphite", "influx",
-			"new-relic", "otlp-metrics", "prometheus", "wavefront", "zipkin");
+			"new-relic", "otlp-metrics", "prometheus", "zipkin");
 
 	private static final Collection<String> PERSISTENCE = List.of("jdbc", "jpa", "mongodb", "neo4j");
 
-	private static final Collection<String> BROKERS = List.of("activemq", "amqp", "artemis", "kafka");
+	private static final Collection<String> BROKERS = List.of("activemq", "artemis", "kafka", "rabbitmq");
 
 	private final Version version;
 
@@ -137,8 +137,9 @@ class SpringModulithBuildCustomizer implements BuildCustomizer<Build> {
 
 	private String getModulithBrokerKey(String broker) {
 		return switch (broker) {
-			case "kafka", "amqp" -> broker;
 			case "artemis", "activemq" -> "jms";
+			case "kafka" -> broker;
+			case "rabbitmq" -> "amqp";
 			default -> throw new IllegalArgumentException("Unsupported broker!");
 		};
 	}
