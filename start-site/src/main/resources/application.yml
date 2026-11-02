@@ -133,7 +133,7 @@ initializr:
         additionalBoms: [ spring-cloud ]
         mappings:
           - compatibilityRange: "[4.0.0,4.2.0-M1)"
-            version: 8.2.2
+            version: 8.3.0
       spring-cloud-services:
         groupId: io.pivotal.spring.cloud
         artifactId: spring-cloud-services-dependencies
@@ -167,6 +167,13 @@ initializr:
         mappings:
           - compatibilityRange: "[4.0.0,4.2.0-M1)"
             version: 4.0.2
+      stubborn-contract:
+        groupId: sh.stubborn
+        artifactId: stubborn-contract-dependencies
+        versionProperty: stubborn-contract.version
+        mappings:
+          - compatibilityRange: "[4.0.0,4.2.0-M1)"
+            version: 0.2.2
       tanzu-scg-extensions:
         groupId: com.vmware.tanzu.springcloudgateway.extensions
         artifactId: extensions-bom
@@ -194,7 +201,7 @@ initializr:
         versionProperty: vaadin.version
         mappings:
           - compatibilityRange: "[4.1.0,4.2.0-M1)"
-            version: 25.3.3
+            version: 25.3.4
     platform:
       compatibilityRange: "4.0.0"
     repositories:
@@ -522,7 +529,7 @@ initializr:
           compatibilityRange: "[4.0.0,4.1.0-M1)"
           groupId: gg.jte
           artifactId: jte-spring-boot-starter-4
-          version: 3.2.4
+          version: 3.2.5
           links:
             - rel: reference
               href: https://jte.gg/
@@ -1371,6 +1378,29 @@ initializr:
           links:
             - rel: reference
               href: https://java.testcontainers.org/
+        - name: Stubborn Contract Verifier
+          bom: stubborn-contract
+          compatibilityRange: "[4.0.0,4.2.0-M1)"
+          id: stubborn-contract-verifier
+          description: Moves TDD to the level of software architecture by enabling Consumer Driven Contract (CDC) development.
+          groupId: sh.stubborn
+          artifactId: stubborn-contract-starter-verifier
+          scope: test
+          links:
+            - rel: reference
+              href: https://docs.stubborn.sh/contract/
+        - name: Stubborn Contract Stub Runner
+          bom: stubborn-contract
+          compatibilityRange: "[4.0.0,4.2.0-M1)"
+          id: stubborn-contract-stub-runner
+          description: Stub Runner for HTTP/Messaging based communication. Allows creating WireMock stubs from RestDocs tests.
+          groupId: sh.stubborn
+          artifactId: stubborn-contract-starter-stub-runner
+          scope: test
+          starter: false
+          links:
+            - rel: reference
+              href: https://docs.stubborn.sh/contract/reference/stub-runner.html
         - name: Embedded LDAP Server
           id: unboundid-ldap
           description: Provides a platform neutral way for running a LDAP server in unit tests.
@@ -2356,9 +2386,12 @@ initializr:
       id: yaml
       default: false
   bootVersions:
-    - name: 4.0.0
-      id: 4.0.0
+    - name: 4.1.2
+      id: 4.1.2
       default: true
+    - name: 4.0.9
+      id: 4.0.9
+      default: false
 
 ---
 
